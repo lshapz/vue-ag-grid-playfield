@@ -26,3 +26,7 @@ For detailed explanation on how things work, consult the [docs for vue-loader](h
 # conclusion for now
 
 why do we have to build the filter components ourselves? feature rich but implmentation complicated. possibility, not first choice.
+
+# notes
+
+* ag-grid does not rerender entirely when the rowData prop updates 

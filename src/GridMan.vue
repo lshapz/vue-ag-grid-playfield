@@ -1,8 +1,8 @@
 <template>
-    <div style="width: 900px;">
+    <div style="width: 100%;">
         <button style="margin-bottom: 10px" @click="onClicked()">Filter Instance Method</button>
         <h1>Large Data Set Component (50,000 rows)</h1>
-        <ag-grid-vue style="width: 100%; height: 350px;" class="ag-fresh"
+        <ag-grid-vue style="width: 100%; height: 600px;" class="ag-fresh"
                      :gridOptions="gridOptions">
         </ag-grid-vue>
     </div>
@@ -10,68 +10,78 @@
 
 <script>
 
-    import Vue from "vue";
-    import {AgGridVue} from "ag-grid-vue";
-    import PartialMatchFilterComponent from './FilterMan'
+import Vue from "vue";
+import {AgGridVue} from "ag-grid-vue";
+import PartialMatchFilterComponent from './FilterMan'
+import {randomizeDataMixin} from './mixins.js'
+var oneTestRow = [{"account":"NOTANACCOUNT","trader":"Trader3","strategy":"Strategy3","counterparty":"Counterparty2","cid":"701829","ticker":"NYSE:CMG","ric":"SEE","bbg":"XEE","type":"MARKET","orderId":"0","quantity":"272","price":"360.6745928","filled":"0","open":"272","limitPrice":"0","filledPrice":"0","venue":"VEE","gateway":"EBSD_GWY","currency":"USD","side":"BUY","originalOrderId":"114514","rejected":"FALSE","rejectedReason":"","state":"INIT","entryMethod":"PROGRAMMATIC_EMS_API","transactTime":"2016-08-09T17:35:42.777Z","placementTime":"2016-08-09T17:35:42.777Z","emsTime":"2016-08-09T17:35:42.778Z"}]
 
-    export default {
-        data() {
-            return {
-                text: null
-            }
-        },
-        computed: {
-            gridOptions: function () {
-                let gridOptions = {};
-                gridOptions.rowData = this.rowData;
-                gridOptions.columnDefs = this.columnDefs;
-                gridOptions.enableFilter = true;
-                gridOptions.defaultColDef = {
-                    menuTabs: ['filterMenuTab']
-                }
-                return gridOptions
-            }
-        },
-        components: {
-            'ag-grid-vue': AgGridVue,
-        },
-        created() {
-            // data created here so outside of vue (ie no reactive, not observed)
-            // also frozen (prob unnecessarily)
-            this.rowData = [];
-            for (let i = 0; i < 50000; i++) {
-                this.rowData.push(Object.freeze({
-                    recordNumber: i,
-                    value1: Math.floor(Math.random() * 10000),
-                    value2: Math.floor(Math.random() * 10000),
-                    value3: Math.floor(Math.random() * 10000),
-                    value4: Math.floor(Math.random() * 10000),
-                    value5: Math.floor(Math.random() * 10000),
-                    value6: Math.floor(Math.random() * 10000),
-                    value7: Math.floor(Math.random() * 10000)
-                }));
-            }
-            this.rowData = Object.freeze(this.rowData);
-
-            this.columnDefs = Object.freeze([
-                {headerName: 'Record', field: 'recordNumber'},
-                {headerName: 'Value 1', field: 'value1'},
-                {headerName: 'Value 2', field: 'value2'},
-                {headerName: 'Value 3', field: 'value3'},
-                {headerName: 'Value 4', field: 'value4'},
-                {headerName: 'Value 5', field: 'value4'},
-                {headerName: 'Value 6', field: 'value4'},
-                {headerName: 'Value 7', field: 'value4'},
-                {headerName: "Filter Component", field: "name", filterFramework: PartialMatchFilterComponent, width: 430}
-            ])
-        },
-        methods: {
-          onClicked: function() {
-                this.gridOptions.api.getFilterInstance("name").getFrameworkComponentInstance().componentMethod("Hello World!");
-            }
-
+export default {
+    mixins: [randomizeDataMixin], 
+    data() {
+        return {
+            columnDefs: [ { headerName: 'Account', field: 'account' },
+                          { headerName: 'Trader', field: 'trader' },
+                          { headerName: 'Strategy', field: 'strategy' },
+                          { headerName: 'Counterparty', field: 'counterparty' },
+                          { headerName: 'CID', field: 'cid' },
+                          { headerName: 'Ticker', field: 'ticker' },
+                          { headerName: 'RIC', field: 'ric' },
+                          { headerName: 'BBG', field: 'bbg' },
+                          { headerName: 'Type', field: 'type' },
+                          { headerName: 'Order ID', field: 'orderId' },
+                          { headerName: 'Quantity', field: 'quantity' },
+                          { headerName: 'Price', field: 'price' },
+                          { headerName: 'Filled', field: 'filled' },
+                          { headerName: 'Open', field: 'open' },
+                          { headerName: 'Limit Price', field: 'limitPrice' },
+                          { headerName: 'Filled Price', field: 'filledPrice' },
+                          { headerName: 'Venue', field: 'venue' },
+                          { headerName: 'Gateway', field: 'gateway' },
+                          { headerName: 'Currency', field: 'currency' },
+                          { headerName: 'Side', field: 'side' },
+                          { headerName: 'Original Order ID', field: 'originalOrderId' },
+                          { headerName: 'Rejected', field: 'rejected' },
+                          { headerName: 'Rejected Reason', field: 'rejectedReason' },
+                          { headerName: 'State', field: 'state' },
+                          { headerName: 'Entry Method', field: 'entryMethod' },
+                          { headerName: 'Transact Time', field: 'transactTime' },
+                          { headerName: 'Placement Time', field: 'placementTime' },
+                          { headerName: 'Ems Time', field: 'emsTime' } 
+                        ],
+            rowData: oneTestRow.concat(this.mock100000()),
         }
+    },
+    computed: {
+        gridOptions: function () {
+            let gridOptions = {};
+            gridOptions.rowData = this.rowData;
+            gridOptions.columnDefs = this.columnDefs;
+            gridOptions.enableFilter = true;
+            gridOptions.defaultColDef = {
+                menuTabs: ['filterMenuTab']
+            }
+            return gridOptions
+        }
+    },
+    components: {
+        'ag-grid-vue': AgGridVue,
+    },
+    created() {                  
+        let localThis = this
+        setInterval(function(){
+            // localThis.$set(localThis.rowData, localThis.mock10000())
+            localThis.rowData = localThis.mock100000()
+        }, 10000)
+    },
+    methods: {
+
+        onClicked: function() {
+            this.gridOptions.api.getFilterInstance("name").getFrameworkComponentInstance().componentMethod("Hello World!");
+        }
+
     }
+}
 </script>
 
 <style>
