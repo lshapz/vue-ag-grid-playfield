@@ -1,6 +1,5 @@
 <template>
     <div style="width: 100%;">
-        <button style="margin-bottom: 10px" @click="onClicked()">Filter Instance Method</button>
         <h1>Large Data Set Component (50,000 rows)</h1>
         <ag-grid-vue style="width: 100%; height: 600px;" class="ag-fresh"
                      :gridOptions="gridOptions">
@@ -12,7 +11,6 @@
 
 import Vue from "vue";
 import {AgGridVue} from "ag-grid-vue";
-import PartialMatchFilterComponent from './FilterMan'
 import {randomizeDataMixin} from './mixins.js'
 var oneTestRow = [{"account":"NOTANACCOUNT","trader":"Trader3","strategy":"Strategy3","counterparty":"Counterparty2","cid":"701829","ticker":"NYSE:CMG","ric":"SEE","bbg":"XEE","type":"MARKET","orderId":"0","quantity":"272","price":"360.6745928","filled":"0","open":"272","limitPrice":"0","filledPrice":"0","venue":"VEE","gateway":"EBSD_GWY","currency":"USD","side":"BUY","originalOrderId":"114514","rejected":"FALSE","rejectedReason":"","state":"INIT","entryMethod":"PROGRAMMATIC_EMS_API","transactTime":"2016-08-09T17:35:42.777Z","placementTime":"2016-08-09T17:35:42.777Z","emsTime":"2016-08-09T17:35:42.778Z"}]
 
@@ -58,26 +56,49 @@ export default {
             gridOptions.rowData = this.rowData;
             gridOptions.columnDefs = this.columnDefs;
             gridOptions.enableFilter = true;
-            gridOptions.defaultColDef = {
-                menuTabs: ['filterMenuTab']
-            }
+            gridOptions.enableSorting = true;
+            gridOptions.singleClickEdit = true;
+            gridOptions.showToolPanel = true;
+            gridOptions.suppressScrollOnNewData = true;
+            gridOptions.pagination = true;
+            gridOptions.rowBuffer = 100;
+            gridOptions.debug = true;
+            gridOptions.onCellClicked = this.onClicked;
+            // gridOptions.defaultColDef = {
+            //     menuTabs: ['filterMenuTab']
+            // }
             return gridOptions
-        }
+        },
+        // rowDataReal: {
+        //     get: function(){
+        //         return this.rowData
+        //     },
+        //     set: function(){
+        //         let returnValue
+        //         let localThis = this
+        //         setInterval(function(){
+        //     // localThis.$set(localThis.rowData, localThis.mock10000())
+        //             localThis.rowData = localThis.mock100000()
+        //         }, 10000)
+        //     }
+        // 
+        // }
     },
     components: {
         'ag-grid-vue': AgGridVue,
     },
     created() {                  
         let localThis = this
-        setInterval(function(){
-            // localThis.$set(localThis.rowData, localThis.mock10000())
-            localThis.rowData = localThis.mock100000()
-        }, 10000)
+        // setInterval(function(){
+        //     // localThis.$set(localThis.rowData, localThis.mock10000())
+        //     localThis.rowData = localThis.mock100000()
+        // }, 10000)
     },
     methods: {
 
         onClicked: function() {
-            this.gridOptions.api.getFilterInstance("name").getFrameworkComponentInstance().componentMethod("Hello World!");
+            console.log(this)
+            // this.gridOptions.api.getFilterInstance("name").getFrameworkComponentInstance().componentMethod("Hello World!");
         }
 
     }

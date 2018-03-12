@@ -1,7 +1,7 @@
 <template>
 <div id="app">
    
-  <button @click="clicker">Click Me</button>
+  <button @click="clicker">Show/Hide Grid</button>
   <div v-if="showGrid">
     <grid-man></grid-man>
   </div>
@@ -10,17 +10,17 @@
 </template>
 
 <script>
-import GridMan from "./GridMan.vue"
+import EnterpriseBlotterTest from "./EnterpriseBlotterTest.vue"
 
   export default {
   name: 'app',
   components: {
-    'grid-man': GridMan
+    'grid-man': EnterpriseBlotterTest
   },
   data: function() {
     return {
       msg: "Howdy",
-      showGrid: false
+      showGrid: true
     }
   },
   methods: {
