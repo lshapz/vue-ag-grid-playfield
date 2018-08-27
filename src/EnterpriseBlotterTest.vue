@@ -13,12 +13,16 @@ import axios from 'axios'
 import AgTable from './AgTable.vue'
 import "../node_modules/ag-grid/dist/styles/ag-grid.css";
 import "../node_modules/ag-grid/dist/styles/theme-material.css";
+import "ag-grid-enterprise/main";
+
 // cell editor framework components - does not work as .vue single-file component
 import NumericEditorComponent from './NumericEditorComponent.js'
 import ValidationEditorComponent from './ValidationEditorComponent.js'
 
 // server-side data functions (sort, filter)
 import EnterpriseDataSource from './EnterpriseDataSource.js'
+import ViewportDataSource from './ViewportDataSource.js'
+import MockServer from './mockServer.js'
 //mixins
 
 export default {
@@ -80,6 +84,7 @@ export default {
         // gridOptions.editType = 'fullRow'; // cannot have both 'fullRow' and select based cell edits
         gridOptions.enableServerSideSorting = true;
         gridOptions.enableServerSideFilter = true;
+        // gridOptions.rowModelType = 'viewport';
         gridOptions.rowModelType = 'infinite';
         gridOptions.rowBuffer = 100;
         gridOptions.debug = true;
@@ -100,6 +105,7 @@ export default {
   },
   mounted(){
     let localThis = this
+    // this.createViewPort()
     axios.get('http://localhost:3000/data').then(item=>{
       localThis.createDataSource(item.data)
     })
@@ -108,6 +114,16 @@ export default {
     createDataSource: function(data){
       let dataSource = new EnterpriseDataSource(data)
       this.gridOptions.api.setDatasource(dataSource)
+    },
+    createViewPort: function(){
+      axios.get('http://localhost:3000/data').then(response=>{
+        var mockServer = new MockServer()
+        mockServer.init(response.data)
+        var viewportDataSource = new ViewportDataSource(mockServer)
+        gridOptions.api.setViewportDataSource(viewportDataSource)
+        
+      })
+
     },
     submitChangeToRest: function(params){
         let data = {},
